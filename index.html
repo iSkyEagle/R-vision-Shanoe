@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PharmaCancer — Révisions</title>
+<title>Shanoe — Révisions</title>
 <style>
 :root{--p:#667EEA;--pd:#5A67D8;--pl:#EBF4FF;--s:#48BB78;--sl:#F0FFF4;--w:#ECC94B;--wl:#FFFFF0;--e:#F56565;--el:#FFF5F5;--bg:#F7FAFC;--sf:#FFF;--tx:#2D3748;--tl:#718096;--bd:#E2E8F0;--r:12px;--rs:8px;--sh:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);--shl:0 10px 15px -3px rgba(0,0,0,.1)}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -119,6 +119,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </head>
 <body>
 <div id="app"></div>
+<script src="module14_data.js"></script>
 <script>
 // ===== DATA =====
 const COURSES = [
@@ -272,8 +273,17 @@ const QCMS = [
 {id:45,c:5,q:"Associez : Palbociclib / Olaparib / Anastrozole / Dasatinib / Vinorelbine",o:["A) Dasatinib=poison fuseau; Olaparib=ITK-BCR-ABL; Palbociclib=inhib. PARP","B) Palbociclib=inhib. CDK4/6; Olaparib=inhib. PARP; Anastrozole=anti-aromatase; Dasatinib=ITK-BCR-ABL; Vinorelbine=vinca-alcaloïde","C) Palbociclib=ITK-EGFR; Olaparib=anti-aromatase; Dasatinib=anti-angiogénique","D) Toutes les associations sont incorrectes"],r:1,e:"Palbociclib (Ibrance®)=inhib. CDK4/6 | Olaparib (Lynparza®)=inhib. PARP | Anastrozole (Arimidex®)=anti-aromatase | Dasatinib (Sprycel®)=ITK BCR-ABL 2ème gén. | Vinorelbine (Navelbine®)=vinca-alcaloïde."}
 ];
 
+// ===== MODULE 14 INTEGRATION =====
+if(typeof MODULE_14!=='undefined'){
+function md2h(md){var ls=md.split('\n'),h='',tbl=false,ul=false,ol=false,fr=true;function cl(){if(ul){h+='</ul>';ul=false}if(ol){h+='</ol>';ol=false}if(tbl){h+='</table>';tbl=false}}for(var i=0;i<ls.length;i++){var t=ls[i].trim();if(!t){cl();continue}if(/^\|[\s\-:]+\|$/.test(t))continue;if(t[0]==='|'&&t[t.length-1]==='|'){if(!tbl){cl();h+='<table>';tbl=true;fr=true}var cs=t.slice(1,-1).split('|').map(function(c){return c.trim()}),tg=fr?'th':'td';h+='<tr>'+cs.map(function(c){return'<'+tg+'>'+c+'</'+tg+'>'}).join('')+'</tr>';fr=false;continue}if(tbl){h+='</table>';tbl=false}if(t.indexOf('• ')===0||t.indexOf('— ')===0){if(ol){h+='</ol>';ol=false}if(!ul){h+='<ul>';ul=true}h+='<li>'+t.replace(/^[•—]\s*/,'')+'</li>';continue}if(/^\d+[\.\)]\s/.test(t)){if(ul){h+='</ul>';ul=false}if(!ol){h+='<ol>';ol=true}h+='<li>'+t.replace(/^\d+[\.\)]\s*/,'')+'</li>';continue}if(t.indexOf('→')===0){if(!ul){cl();h+='<ul>';ul=true}h+='<li>'+t+'</li>';continue}if(t.indexOf('⚠️')===0){cl();h+="<div class='warn'>"+t+'</div>';continue}cl();h+='<p>'+t+'</p>'}cl();h=h.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');h=h.replace(/\*([^*]+)\*/g,'<em>$1</em>');return h}
+var m14b=MODULE_14.cours.map(function(b){return{t:b.titre,h:md2h(b.contenu)+(b.aRetenir?"<div class='kp'>💡 <strong>À retenir</strong> : "+b.aRetenir.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')+'</div>':'')}});
+COURSES.push({id:6,title:"L'Appareil Respiratoire",subtitle:"Module 14 — Anatomie, physiologie, pathologies et pharmacologie",icon:"🫁",blocks:m14b});
+MODULE_14.flashcards.forEach(function(fc){FLASHCARDS.push({id:60+fc.id,c:6,q:fc.recto,a:fc.verso})});
+MODULE_14.qcm.forEach(function(q){QCMS.push({id:45+q.id,c:6,q:q.question,o:q.options,r:q.reponse,e:q.explication})});
+}
+
 // ===== STATE =====
-const LS='pharmacancer';
+const LS='shanoe';
 let toastTimer=null;
 function defaults(){return{page:'library',courseId:null,tab:'cours',statuses:{},fcProgress:{},qcmAnswers:{},apiKey:'',quizMessages:{},showSettings:false,expandedBlocks:{},fcFlipped:false,fcIndex:0,qcmIndex:0,qcmAnswered:false,qcmSelected:-1,qcmScore:0,qcmShuffled:[],quizLoading:false,toastMsg:'',toastVisible:false}}
 function loadState(){try{const s=JSON.parse(localStorage.getItem(LS)||'{}');return{...defaults(),...s}}catch(e){return defaults()}}
@@ -293,7 +303,7 @@ function stLabel(cid){return{upcoming:'À venir',inprogress:'En cours',completed
 // ===== RENDER =====
 function render(){const app=document.getElementById('app');let h=renderHeader();if(S.page==='library')h+=renderLibrary();else if(S.page==='course')h+=renderCourse();if(S.showSettings)h+=renderModal();h+='<div class="toast '+(S.toastVisible?'show':'')+'">'+(S.toastMsg||'')+'</div>';app.innerHTML=h;if(S.page==='course'&&S.tab==='quiz'){const cm=document.querySelector('.chat-messages');if(cm)cm.scrollTop=cm.scrollHeight}}
 
-function renderHeader(){return'<header class="header"><div><h1>PharmaCancer</h1><p>Révisions de pharmacologie anticancéreuse</p></div><div><button class="btn-icon" data-action="open-settings" title="Paramètres">⚙️</button></div></header>'}
+function renderHeader(){return'<header class="header"><div><h1>Shanoe</h1><p>Révisions médicales et pharmaceutiques</p></div><div><button class="btn-icon" data-action="open-settings" title="Paramètres">⚙️</button></div></header>'}
 
 function renderLibrary(){return'<div class="main"><div class="section-header"><h2>Bibliothèque de cours</h2><p>Sélectionnez un cours pour commencer vos révisions</p></div><div class="course-grid">'+COURSES.map(c=>{const p=progress(c.id),fc=FLASHCARDS.filter(f=>f.c===c.id).length,qc=QCMS.filter(q=>q.c===c.id).length;return'<div class="course-card" data-action="open-course" data-id="'+c.id+'"><div style="display:flex;justify-content:space-between;align-items:start"><div class="icon">'+c.icon+'</div><span class="status-badge '+stClass(c.id)+'" data-action="cycle-status" data-id="'+c.id+'">'+stLabel(c.id)+'</span></div><h3>'+c.title+'</h3><p class="subtitle">'+c.subtitle+'</p><div style="display:flex;gap:12px;font-size:.8rem;color:var(--tl);margin-bottom:8px"><span>📇 '+fc+' flashcards</span><span>✅ '+qc+' QCM</span></div><div class="progress-bar"><div class="progress-fill" style="width:'+p+'%"></div></div><div style="text-align:right;font-size:.8rem;color:var(--tl);margin-top:4px">'+p+'%</div></div>'}).join('')+'</div></div>'}
 
@@ -339,7 +349,7 @@ if(e.key==='Enter'&&S.page==='course'&&S.tab==='quiz'&&!S.quizLoading){const inp
 // ===== AI =====
 function courseCtx(cid){const c=COURSES.find(x=>x.id===cid);if(!c)return'';return c.blocks.map(b=>b.t+':\n'+b.h.replace(/<[^>]*>/g,'').replace(/&[a-z]+;/g,' ')).join('\n\n')}
 
-async function callClaude(cid,msgs){const ctx=courseCtx(cid);const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':S.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1024,system:'Tu es un professeur de pharmacologie anticancéreuse bienveillant mais rigoureux. Pose des questions pertinentes et évalue les réponses. Corrige les erreurs avec des explications pédagogiques. Encourage les bonnes réponses.\n\nContenu du cours :\n'+ctx,messages:msgs.map(m=>({role:m.role,content:m.content}))})});if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||'Erreur HTTP '+res.status)}const data=await res.json();return data.content[0].text}
+async function callClaude(cid,msgs){const c=COURSES.find(x=>x.id===cid);const ctx=courseCtx(cid);const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':S.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1024,system:'Tu es un professeur bienveillant mais rigoureux. Tu enseignes : '+(c?c.title:'pharmacologie')+'. Pose des questions pertinentes et évalue les réponses. Corrige les erreurs avec des explications pédagogiques. Encourage les bonnes réponses.\n\nContenu du cours :\n'+ctx,messages:msgs.map(m=>({role:m.role,content:m.content}))})});if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||'Erreur HTTP '+res.status)}const data=await res.json();return data.content[0].text}
 
 async function askNewQ(){if(!S.courseId||S.quizLoading)return;const cid=S.courseId;if(!S.quizMessages[cid])S.quizMessages[cid]=[];S.quizMessages[cid].push({role:'user',content:'Pose-moi une question sur ce cours.'});S.quizLoading=true;render();try{const r=await callClaude(cid,S.quizMessages[cid]);S.quizMessages[cid].push({role:'assistant',content:r});saveState()}catch(err){S.quizMessages[cid].push({role:'assistant',content:'Erreur : '+err.message})}S.quizLoading=false;render()}
 
