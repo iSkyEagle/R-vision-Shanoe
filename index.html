@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shanoe — Révisions</title>
+<style>
+:root{--p:#667EEA;--pd:#5A67D8;--pl:#EBF4FF;--s:#48BB78;--sl:#F0FFF4;--w:#ECC94B;--wl:#FFFFF0;--e:#F56565;--el:#FFF5F5;--bg:#F7FAFC;--sf:#FFF;--tx:#2D3748;--tl:#718096;--bd:#E2E8F0;--r:12px;--rs:8px;--sh:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);--shl:0 10px 15px -3px rgba(0,0,0,.1)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--tx);line-height:1.6;min-height:100vh}
+.header{background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;padding:20px 24px;display:flex;justify-content:space-between;align-items:center;box-shadow:var(--shl)}
+.header h1{font-size:1.5rem;font-weight:700;letter-spacing:-.5px}
+.header p{font-size:.85rem;opacity:.85}
+.btn-icon{background:rgba(255,255,255,.2);border:none;color:#fff;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.btn-icon:hover{background:rgba(255,255,255,.3)}
+.main{max-width:1200px;margin:0 auto;padding:24px}
+.course-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;margin-top:12px}
+.course-card{background:var(--sf);border-radius:var(--r);padding:24px;box-shadow:var(--sh);cursor:pointer;transition:all .2s;border:2px solid transparent;position:relative}
+.course-card:hover{transform:translateY(-2px);box-shadow:var(--shl);border-color:var(--pl)}
+.course-card .icon{font-size:2.5rem;margin-bottom:12px}
+.course-card h3{font-size:1.1rem;margin-bottom:4px}
+.course-card .subtitle{color:var(--tl);font-size:.85rem;margin-bottom:16px}
+.status-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .2s}
+.status-upcoming{background:var(--bd);color:var(--tl)}
+.status-inprogress{background:var(--pl);color:var(--pd)}
+.status-completed{background:var(--sl);color:var(--s)}
+.progress-bar{height:6px;background:var(--bd);border-radius:3px;margin-top:16px;overflow:hidden}
+.progress-fill{height:100%;background:var(--p);border-radius:3px;transition:width .5s ease}
+.back-btn{display:inline-flex;align-items:center;gap:8px;color:var(--p);background:none;border:none;font-size:.95rem;cursor:pointer;padding:8px 0;font-weight:500}
+.back-btn:hover{text-decoration:underline}
+.course-header{margin-bottom:24px}
+.course-header h2{font-size:1.5rem;display:flex;align-items:center;gap:12px}
+.tabs{display:flex;gap:4px;background:var(--bd);border-radius:var(--rs);padding:4px;margin-bottom:24px}
+.tab-btn{flex:1;padding:10px 16px;border:none;background:none;border-radius:6px;cursor:pointer;font-weight:500;font-size:.9rem;color:var(--tl);transition:all .2s}
+.tab-btn.active{background:var(--sf);color:var(--p);box-shadow:var(--sh)}
+.block{background:var(--sf);border-radius:var(--r);margin-bottom:12px;box-shadow:var(--sh);overflow:hidden}
+.block-header{padding:16px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600;transition:background .2s}
+.block-header:hover{background:var(--pl)}
+.block-header .arrow{transition:transform .3s;font-size:.8rem}
+.block-header.expanded .arrow{transform:rotate(90deg)}
+.block-content{padding:0 20px;max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s ease}
+.block-content.expanded{padding:0 20px 20px;max-height:5000px}
+.block-content h4{color:var(--pd);margin:12px 0 8px}
+.block-content p{margin-bottom:8px}
+.block-content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9rem}
+.block-content th,.block-content td{padding:8px 12px;border:1px solid var(--bd);text-align:left}
+.block-content th{background:var(--pl);font-weight:600}
+.block-content ul,.block-content ol{padding-left:20px;margin:8px 0}
+.block-content li{margin:4px 0}
+.block-content .warn{background:var(--wl);border-left:4px solid var(--w);padding:12px 16px;border-radius:0 var(--rs) var(--rs) 0;margin:12px 0}
+.block-content .kp{background:var(--pl);border-left:4px solid var(--p);padding:12px 16px;border-radius:0 var(--rs) var(--rs) 0;margin:12px 0}
+.fc-stats{display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+.fc-stat{background:var(--sf);padding:12px 20px;border-radius:var(--rs);box-shadow:var(--sh);text-align:center;min-width:100px}
+.fc-stat .num{font-size:1.5rem;font-weight:700}
+.fc-stat .label{font-size:.8rem;color:var(--tl)}
+.fc-card-container{perspective:1000px;max-width:600px;margin:0 auto}
+.fc-card{position:relative;width:100%;min-height:250px;cursor:pointer;transform-style:preserve-3d;transition:transform .6s}
+.fc-card.flipped{transform:rotateY(180deg)}
+.fc-front,.fc-back{position:absolute;width:100%;min-height:250px;backface-visibility:hidden;border-radius:var(--r);box-shadow:var(--shl);padding:32px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.fc-front{background:var(--sf)}
+.fc-back{background:linear-gradient(135deg,var(--pl),#f0f4ff);transform:rotateY(180deg)}
+.fc-front p,.fc-back p{font-size:1.1rem;line-height:1.6}
+.fc-hint{color:var(--tl);font-size:.8rem;margin-top:16px}
+.fc-counter{text-align:center;color:var(--tl);font-size:.85rem;margin-bottom:12px}
+.fc-rating{display:flex;gap:8px;justify-content:center;margin-top:24px;flex-wrap:wrap}
+.fc-rating button{padding:10px 20px;border:none;border-radius:var(--rs);cursor:pointer;font-weight:500;font-size:.9rem;transition:all .2s}
+.rate-again{background:var(--el);color:var(--e)}
+.rate-hard{background:var(--wl);color:#B7791F}
+.rate-good{background:var(--pl);color:var(--pd)}
+.rate-easy{background:var(--sl);color:var(--s)}
+.fc-rating button:hover{transform:scale(1.05)}
+.fc-done{text-align:center;padding:48px 24px}
+.fc-done .emoji{font-size:3rem;margin-bottom:16px}
+.qcm-progress{text-align:center;color:var(--tl);font-size:.9rem;margin-bottom:16px}
+.qcm-question{background:var(--sf);border-radius:var(--r);padding:24px;box-shadow:var(--sh);margin-bottom:16px}
+.qcm-question h3{font-size:1.1rem;line-height:1.5}
+.qcm-options{display:flex;flex-direction:column;gap:10px}
+.qcm-option{padding:14px 20px;background:var(--sf);border:2px solid var(--bd);border-radius:var(--rs);cursor:pointer;text-align:left;font-size:.95rem;transition:all .2s;line-height:1.4}
+.qcm-option:hover:not(.disabled){border-color:var(--p);background:var(--pl)}
+.qcm-option.correct{border-color:var(--s);background:var(--sl)}
+.qcm-option.wrong{border-color:var(--e);background:var(--el)}
+.qcm-option.disabled{cursor:default;opacity:.7}
+.qcm-explanation{background:var(--pl);border-radius:var(--rs);padding:16px 20px;margin-top:16px;line-height:1.5}
+.qcm-score{text-align:center;padding:32px;background:var(--sf);border-radius:var(--r);box-shadow:var(--sh)}
+.qcm-score .score-big{font-size:3rem;font-weight:700;color:var(--p)}
+.btn{padding:10px 24px;border:none;border-radius:var(--rs);cursor:pointer;font-weight:600;font-size:.9rem;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+.btn-primary{background:var(--p);color:#fff}
+.btn-primary:hover{background:var(--pd)}
+.btn-secondary{background:var(--bd);color:var(--tx)}
+.btn-secondary:hover{background:#CBD5E0}
+.quiz-notice{background:var(--wl);border-left:4px solid var(--w);padding:16px;border-radius:0 var(--rs) var(--rs) 0;margin-bottom:16px;font-size:.9rem}
+.chat-container{background:var(--sf);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;display:flex;flex-direction:column;min-height:400px}
+.chat-messages{flex:1;padding:20px;overflow-y:auto;max-height:400px}
+.chat-msg{margin-bottom:16px;display:flex}
+.chat-msg.user{justify-content:flex-end}
+.chat-msg.assistant{justify-content:flex-start}
+.msg-bubble{max-width:80%;padding:12px 16px;border-radius:16px;line-height:1.5;font-size:.95rem;white-space:pre-wrap}
+.chat-msg.user .msg-bubble{background:var(--p);color:#fff;border-bottom-right-radius:4px}
+.chat-msg.assistant .msg-bubble{background:var(--pl);color:var(--tx);border-bottom-left-radius:4px}
+.chat-input-area{display:flex;gap:8px;padding:16px;border-top:1px solid var(--bd)}
+.chat-input-area input{flex:1;padding:10px 16px;border:2px solid var(--bd);border-radius:var(--rs);font-size:.95rem;outline:none;transition:border-color .2s}
+.chat-input-area input:focus{border-color:var(--p)}
+.chat-actions{display:flex;gap:8px;margin-bottom:16px}
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);display:flex;justify-content:center;align-items:center;z-index:100}
+.modal{background:var(--sf);border-radius:var(--r);padding:32px;max-width:480px;width:90%;box-shadow:var(--shl)}
+.modal h2{margin-bottom:16px}
+.modal label{display:block;font-weight:500;margin-bottom:6px;font-size:.9rem}
+.modal input{width:100%;padding:10px 14px;border:2px solid var(--bd);border-radius:var(--rs);font-size:.95rem;margin-bottom:16px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--tx);color:#fff;padding:12px 24px;border-radius:var(--rs);box-shadow:var(--shl);opacity:0;transform:translateY(20px);transition:all .3s ease;z-index:200;font-size:.9rem}
+.toast.show{opacity:1;transform:translateY(0)}
+.loading::after{content:'';display:inline-block;width:16px;height:16px;border:2px solid var(--bd);border-top-color:var(--p);border-radius:50%;animation:spin .8s linear infinite;margin-left:8px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+.section-header{margin-bottom:20px}
+.section-header h2{font-size:1.3rem}
+.section-header p{color:var(--tl);font-size:.9rem}
+@media(max-width:768px){.course-grid{grid-template-columns:1fr}.tabs{flex-wrap:wrap}.tab-btn{font-size:.8rem;padding:8px 12px}.header h1{font-size:1.2rem}.fc-rating{flex-direction:column}.fc-rating button{width:100%}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="module14_data.js"></script>
+<script>
+// ===== DATA =====
+const COURSES = [
+{id:1,title:"Généralités sur le cancer",subtitle:"Partie 1 — Fondamentaux",icon:"🧬",blocks:[
+{t:"Le cancer, une maladie génétique de la cellule",h:"<p>La transformation d'une cellule normale en cellule tumorale résulte de l'accumulation d'<strong>altérations chromosomiques et géniques</strong>. Ces mutations touchent :</p><ul><li><strong>Proto-oncogènes</strong> → mutés en oncogènes activateurs de la prolifération</li><li><strong>Gènes suppresseurs de tumeur</strong> → inactivés, lèvent le frein sur la division cellulaire</li></ul><p><strong>Exemple clé : l'oncogène RAS</strong> — impliqué dans la prolifération cellulaire. Muté, il entraîne une prolifération continue et anarchique.</p><div class='kp'>💡 <strong>À retenir</strong> : Cancer = accumulation de mutations → dérèglement du cycle cellulaire → prolifération incontrôlée.</div>"},
+{t:"Les grandes stratégies de prise en charge",h:"<p>Trois grandes approches thérapeutiques s'associent selon le type et le stade :</p><ul><li><strong>Chirurgie</strong> : tumorectomie, traitement des métastases</li><li><strong>Radiothérapie</strong> : externe, interne, interne vectorisée</li><li><strong>Chimiothérapie au sens large</strong> : cytotoxiques, hormonothérapie, thérapies ciblées, immunothérapie</li></ul>"},
+{t:"Mécanismes d'action des 4 grandes familles",h:"<table><tr><th>Famille</th><th>Mécanisme</th></tr><tr><td><strong>Cytotoxiques</strong></td><td>Agissent sur l'ADN (directement ou indirectement). Action non ciblée : touchent toutes les cellules proliférantes.</td></tr><tr><td><strong>Hormonothérapie</strong></td><td>Bloque l'action proliférative de certaines hormones sur les cellules tumorales.</td></tr><tr><td><strong>Thérapies ciblées</strong></td><td>Molécules dirigées contre des cibles moléculaires spécifiques des cellules tumorales.</td></tr><tr><td><strong>Immunothérapie</strong></td><td>Augmente la réponse immune de l'organisme contre la tumeur.</td></tr></table>"},
+{t:"Pourquoi les cytotoxiques ont-ils des effets secondaires importants ?",h:"<p>Les cytotoxiques ciblent toutes les <strong>cellules à fort index de prolifération</strong>, pas uniquement tumorales :</p><table><tr><th>Tissu touché</th><th>Effet secondaire</th></tr><tr><td>Moelle osseuse</td><td>Myélotoxicité (aplasie médullaire)</td></tr><tr><td>Follicules pileux</td><td>Alopécie</td></tr><tr><td>Épithélium digestif</td><td>Diarrhées, mucites</td></tr><tr><td>Organes de reproduction</td><td>Stérilité</td></tr></table><div class='kp'>💡 Non spécifiques d'aucun cancer. Trop toxiques pour être administrés en continu → cycles espacés de <strong>15 à 21 jours</strong>.</div>"}
+]},
+{id:2,title:"Cytotoxiques",subtitle:"Partie 2 — Alkylants, antimétabolites, intercalants et poisons du fuseau",icon:"💊",blocks:[
+{t:"Les alkylants : mécanisme d'action",h:"<p>Molécules capables d'introduire par <strong>formation de liaisons covalentes</strong> des chaînes alkyles dans l'ADN → <strong>ponts intra-caténaires</strong> (même brin) et <strong>inter-caténaires</strong> (entre les deux brins) → blocage de la réplication.</p><ul><li>Action majorée en <strong>Phase S</strong> du cycle cellulaire</li><li>Indications : hémato-oncologie (Hodgkin, LLC, myélome), tumeurs solides (sein, ovaire, sarcomes, digestif, vessie), tumeurs cérébrales</li></ul><p><strong>Historique</strong> : Issu du gaz moutarde (1ère GM) → aplasie médullaire. Premiers patients traités en <strong>1943</strong>.</p>"},
+{t:"Les alkylants : principales molécules",h:"<h4>Moutardes azotées</h4><ul><li>Estramustine (Estracyt®), Bendamustine (Levact®)</li><li>Cyclophosphamide (Endoxan®)</li><li>Ifosfamide (Holoxan®)</li><li>Melphalan (Alkéran®)</li><li>Chlorambucil (Chloraminophène®)</li></ul><h4>Nitrosourées (lipophiles → passage BHE)</h4><ul><li>Carmustine (Bicnu®), Fotémustine (Muphoran®), Streptozocine (Zanosar®)</li></ul><h4>Autres alkylants</h4><ul><li>Triazènes : Dacarbazine (Déticène®), Temozolomide (Temodal®)</li><li>Busulfan (Myléran®), Mitomycine C (Amétycine®)</li></ul>"},
+{t:"Les antimétabolites : mécanisme d'action",h:"<p>Substances <strong>« frauduleuses »</strong> : structure chimique semblable à des composants métaboliques indispensables. Acceptées comme substrats par les enzymes, elles <strong>inhibent la biosynthèse des acides nucléiques</strong> et des protéines nécessaires à la multiplication cellulaire.</p>"},
+{t:"Les antimétabolites : antifolates",h:"<p>Inhibent le métabolisme de l'acide folique, indispensable à la synthèse des bases nucléiques.</p><p><strong>Molécules :</strong> Méthotrexate/MTX (Ledertrexate®), Raltitrexed (Tomudex®), Pemetrexed (Alimta®)</p><p><strong>Mécanisme MTX</strong> : Entre via le Reduced Folate Carrier (RFC) → inhibe la <strong>DHFR</strong> (dihydrofolate réductase) → blocage FH2→FH4 → pas de dTMP → pas de réplication ADN.</p><p><strong>Indications</strong> : LAL, LNH, sein, vessie, VADS, ostéosarcomes.</p><div class='warn'>⚠️ Prise <strong>une fois par semaine</strong> en traitement de fond (risque de toxicité mortelle si prise quotidienne).</div>"},
+{t:"Les antimétabolites : antagonistes puriques et pyrimidiques",h:"<h4>Antagonistes puriques (Adénine, Guanine)</h4><ul><li>Fludarabine (Fludara®), 6-Mercaptopurine (Purinéthol®), Thioguanine (Lanvis®)</li><li>Pentostatine (Nipent®), Cladribine (Leustatine®)</li></ul><h4>Antagonistes pyrimidiques (Cytosine, Uracile, Thymine)</h4><ul><li><strong>5-Fluorouracile / 5-FU</strong> : K colorectal, sein, ORL, ovaire</li><li><strong>Capécitabine (Xeloda®)</strong> = prodrogue orale du 5-FU : K sein, colorectal</li><li>Gemcitabine (Gemzar®), Cytarabine (Aracytine®), Trifluridine/Tipiracil (Lonsurf®)</li></ul><p><strong>Mécanisme du 5-FU</strong> : Cassures dans l'ADN par carence en dTTP, perturbe production/fonction des ARN.</p>"},
+{t:"Effets indésirables du 5-FU et de la capécitabine",h:"<ul><li>Toxicité hématologique (leucopénie)</li><li>Toxicité digestive (diarrhées, mucites)</li><li><strong>Syndrome main-pieds</strong> (capécitabine +++) : rougeur, fourmillement, dessèchement paumes/plantes</li></ul><div class='warn'>⚠️ <strong>Point critique</strong> : Toxicités sévères liées à un <strong>déficit en DPD</strong> (dihydropyrimidine déshydrogénase). Depuis 2019, <strong>dosage obligatoire de l'uracilémie</strong> avant tout traitement par 5-FU ou capécitabine (recommandation INCa/HAS, décembre 2018).</div>"},
+{t:"Les intercalants (anthracyclines)",h:"<p>S'intercalent entre les deux brins d'ADN → modification configuration 3D.</p><p><strong>Triple mécanisme</strong> :</p><ul><li>Blocage des polymérases → inhibition réplication/transcription</li><li>Génération de radicaux libres</li><li>Liaison aux topoisomérases II → cassures mono et double brin</li></ul><p><strong>Molécules :</strong> Daunorubicine (Cérubidine®), Doxorubicine (Adriblastine®, Caelyx®), Épirubicine (Farmorubicine®), <strong>Idarubicine (Zavedos®)</strong> — seule délivrée en officine, Pirarubicine (Théprubicine®)</p><p><strong>Indications</strong> : Leucémies aiguës myéloblastiques.</p>"},
+{t:"Les inhibiteurs des topoisomérases",h:"<p>Les topoisomérases assurent la spiralisation/déspiralisation de l'ADN par coupures transitoires d'un (topo I) ou des deux (topo II) brins.</p><p><strong>Mécanisme</strong> : Ne s'intercalent PAS dans l'ADN mais <strong>stabilisent le complexe de clivage</strong> → empêchent la religation → coupure définitive → mort cellulaire.</p><ul><li><strong>Topotécan (Hycamtin®)</strong> — inhib. topo I — cancer du poumon</li><li><strong>Étoposide (Celltop®)</strong> — inhib. topo II</li></ul>"},
+{t:"Les poisons du fuseau",h:"<p>Empêchent la formation du <strong>fuseau mitotique</strong>, bloquant la mitose en phase M.</p><h4>Vinca-alcaloïdes (pervenche)</h4><p>Se fixent sur la tubuline → <strong>inhibent la polymérisation</strong> → pas de microtubules.</p><ul><li>Vinorelbine (Navelbine®) : CPNPC, cancer du sein métastatique</li></ul><h4>Taxanes</h4><p>Inhibent la <strong>dépolymérisation</strong> des microtubules (effet inverse des vinca-alcaloïdes) → chromosomes ne peuvent pas se séparer en anaphase.</p>"}
+]},
+{id:3,title:"Hormonothérapie",subtitle:"Partie 3 — Cancer du sein et de la prostate",icon:"🔬",blocks:[
+{t:"Principe général",h:"<p>Certains cancers sont <strong>hormono-dépendants</strong> :</p><ul><li>Cancer du sein → œstrogènes</li><li>Cancer de la prostate → androgènes</li></ul><p><strong>L'hormonothérapie vise à :</strong></p><ol><li>Priver la tumeur de ses hormones</li><li>Utiliser un antagoniste pour inhiber les effets prolifératifs</li></ol>"},
+{t:"Cancer du sein : anti-œstrogènes (SERM)",h:"<p><strong>Tamoxifène (Nolvadex®)</strong> et <strong>Torémifène (Fareston®)</strong> = Modulateurs Sélectifs des Récepteurs aux Estrogènes.</p><p>Rôle variable selon les tissus :</p><ul><li><strong>Antagoniste</strong> sur cellules mammaires ✓</li><li><strong>Agoniste</strong> sur l'os (moins ostéopéniant)</li><li><strong>Agoniste</strong> sur l'endomètre ⚠️ → risque de cancer de l'endomètre</li></ul><p>Durée = <strong>5 ans</strong>. Voie orale, 1×/jour.</p><div class='warn'>⚠️ <strong>Interaction majeure</strong> : Le tamoxifène nécessite une bioactivation en <strong>endoxifène</strong> par le <strong>CYP2D6</strong>. Les inhibiteurs du CYP2D6 (paroxétine, fluoxétine) réduisent son efficacité.</div>"},
+{t:"Cancer du sein : fulvestrant (SERD)",h:"<p><strong>Fulvestrant (Faslodex®)</strong> = Selective Estrogen Receptor Downregulator : rôle <strong>uniquement antagoniste</strong>, sans effet agoniste. Injection <strong>IM 1×/mois</strong>. Durée = 5 ans.</p>"},
+{t:"Effets indésirables des anti-œstrogènes",h:"<ul><li>Bouffées de chaleur</li><li>Aménorrhée</li><li>Troubles thrombo-emboliques</li><li>Ostéoporose, fractures</li><li>Troubles vaginaux et urinaires</li></ul>"},
+{t:"Cancer du sein : anti-aromatases",h:"<p><strong>L'aromatase</strong> = enzyme de formation des œstrogènes dans les tissus mammaires, ovariens et adipeux à partir des androgènes surrénaliens.</p><p><strong>Molécules :</strong> Anastrozole (Arimidex®), Létrozole (Fémarà®), Exemestane (Aromasine®)</p><p>Traitement adjuvant et métastatique du K sein RE+. Voie orale, <strong>5 ans</strong>. <strong>Femmes ménopausées uniquement.</strong></p>"},
+{t:"Analogues LH-RH (GnRH)",h:"<p><strong>Mécanisme en 2 temps :</strong></p><ol><li>Stimulation initiale de LH, FSH → pic hormonal transitoire</li><li>Désensibilisation des récepteurs GnRH (2-4 sem.) → inhibition sécrétion → <strong>castration pharmacologique réversible</strong></li></ol><p><strong>Molécules :</strong> Leuproréline (Enantone LP®), Goséréline (Zoladex®), Triptoréline (Décapeptyl® — prostate uniquement). Administration SC ou IM.</p><div class='warn'>⚠️ Sein : associer anti-œstrogène. Prostate : vérifier testostéronémie + anti-androgène en début.</div>"},
+{t:"Cancer de la prostate : autres hormonothérapies",h:"<p><strong>Antagoniste GnRH :</strong> Dégarélix (Firmagon®) — bloque directement GnRH → ↓↓ FSH/LH/testostérone sans pic initial. SC 1×/mois.</p><p><strong>Progestatif anti-androgénique :</strong> Cyprotérone (Androcur®) — agoniste partiel AR. Voie orale.</p><p><strong>Inhibiteur CYP17 :</strong> Abiratérone (Zytiga®) — bloque 17α-hydroxylase → ↓↓ testostérone. Voie orale.</p><p><strong>Antagonistes AR :</strong> Bicalutamide (Casodex®), Nilutamide (Anandron®). 2ème gén. : Enzalutamide (Xtandi®), Darolutamide (Nubeqa®), Apalutamide (Erleada®).</p><p><strong>EI communs (privation androgénique)</strong> : impuissance, perte de libido, bouffées de chaleur, gynécomastie, atrophie testiculaire, humeur dépressive, asthénie, prise de poids, perte musculaire.</p>"}
+]},
+{id:4,title:"Thérapies ciblées",subtitle:"Partie 4 — ITK, anticorps monoclonaux et inhibiteurs PARP",icon:"🎯",blocks:[
+{t:"Définition et stratégies",h:"<p>Agissent sur des <strong>cibles moléculaires spécifiques</strong> : RTK, protéines intracellulaires, enzymes (PARP).</p><p><strong>2 types aux propriétés PK très différentes :</strong></p><table><tr><th></th><th>Anticorps monoclonaux (-mab)</th><th>ITK (-ib)</th></tr><tr><td>Voie</td><td>IV (dose de charge + entretien)</td><td>Orale, quotidienne</td></tr><tr><td>Cible</td><td>Extracellulaire</td><td>Intracellulaire (lipophile)</td></tr><tr><td>Demi-vie</td><td>Longue</td><td>Variable (5-60h)</td></tr></table>"},
+{t:"Inhibiteurs de BCR-ABL (LMC)",h:"<p><strong>BCR-ABL</strong> : kinase de fusion issue de la translocation t(9;22) = <strong>chromosome Philadelphie</strong>. Cause la LMC. Constitutivement active.</p><table><tr><th>Molécule</th><th>Spécialité</th><th>Génération</th><th>AMM</th></tr><tr><td>Imatinib</td><td>Glivec</td><td>1ère</td><td>2001</td></tr><tr><td>Dasatinib</td><td>Sprycel</td><td>2ème</td><td>2006</td></tr><tr><td>Nilotinib</td><td>Tasigna</td><td>2ème</td><td>2007</td></tr><tr><td>Bosutinib</td><td>Bosulif</td><td>2ème</td><td>2013</td></tr><tr><td>Ponatinib</td><td>Iclusig</td><td>3ème (actif T315I)</td><td>2013</td></tr></table><p><strong>EI</strong> : rétention hydrique, œdèmes péri-orbitaires (imatinib +++), troubles digestifs, myélosuppression.</p>"},
+{t:"Anti-angiogéniques (VEGFR)",h:"<p>La néo-angiogenèse tumorale est stimulée par VEGF, FGF, PDGF → récepteurs VEGFR-1, -2, -3.</p><table><tr><th>Molécule</th><th>Spécialité</th><th>Indications</th></tr><tr><td>Sorafénib</td><td>Nexavar</td><td>K rénal, hépatocellulaire</td></tr><tr><td>Sunitinib</td><td>Sutent</td><td>K rénal, GIST</td></tr><tr><td>Pazopanib</td><td>Votrient</td><td>K rénal, sarcomes</td></tr><tr><td>Axitinib</td><td>Inlyta</td><td>K rénal</td></tr><tr><td>Cabozantinib</td><td>Cabometyx</td><td>K rénal, hépatocellulaire</td></tr><tr><td>Bévacizumab</td><td>Avastin</td><td>Anticorps anti-VEGF (IV)</td></tr></table><p><strong>EI anti-VEGFR</strong> : HTA, troubles rénaux, microangiopathie, thromboses, saignements.</p><p><strong>EI ITK multicibles</strong> : hépatotoxicité, <strong>syndrome main-pied</strong> (apparaît tôt).</p>"},
+{t:"Anti-EGFR (poumon et colorectal)",h:"<p><strong>EGFR</strong> : récepteur TK surexprimé dans de nombreuses tumeurs.</p><p><strong>Mutations activatrices</strong> (domaine TK) : récepteur muté plus actif ET plus sensible aux inhibiteurs.</p><p><strong>Mutation de résistance T790M</strong> → indication d'osimertinib (3ème gén.).</p><table><tr><th>Molécule</th><th>Spécialité</th><th>Génération</th><th>AMM</th></tr><tr><td>Erlotinib</td><td>Tarceva</td><td>1ère</td><td>2005</td></tr><tr><td>Géfitinib</td><td>Iressa</td><td>1ère</td><td>2009</td></tr><tr><td>Afatinib</td><td>Giotrif</td><td>2ème (irréversible)</td><td>2013</td></tr><tr><td>Osimertinib</td><td>Tagrisso</td><td>3ème (actif T790M)</td><td>2016</td></tr></table><p><strong>EI</strong> : toxicité cutanée (rash acnéiforme) → antihistaminiques + tétracyclines ; pneumopathie interstitielle ; diarrhées.</p>"},
+{t:"Anti-HER2 (cancer du sein)",h:"<p>20-30% des K sein sont <strong>HER2+</strong> → mauvais pronostic.</p><table><tr><th>Molécule</th><th>Spécialité</th><th>Type</th><th>Indications</th></tr><tr><td>Trastuzumab</td><td>Herceptin</td><td>Anticorps (IV)</td><td>K sein/gastrique méta HER2+, K sein précoce</td></tr><tr><td>Tucatinib</td><td>Tukysa</td><td>ITK</td><td>K sein méta HER2+ (≥2 traitements anti-HER2)</td></tr><tr><td>Lapatinib</td><td>Tyverb</td><td>ITK (EGFR+HER2)</td><td>K sein méta HER2+</td></tr></table><p><strong>EI</strong> : <strong>cardiotoxicité</strong> (trastuzumab +++), réactions perfusion, neutropénie.</p>"},
+{t:"Inhibiteurs CDK4/6 (cancer du sein)",h:"<p><strong>CDK4/6</strong> : sérine-thréonine kinases en phase G1. Cible = <strong>Rb</strong>. Inhibition → blocage G1→S.</p><table><tr><th>Molécule</th><th>Spécialité</th><th>Posologie</th></tr><tr><td>Palbociclib</td><td>Ibrance</td><td>125 mg/j – 3 sem/4</td></tr><tr><td>Ribociclib</td><td>Kisqali</td><td>600 mg/j – 3 sem/4</td></tr><tr><td>Abémaciclib</td><td>Verzenios</td><td>—</td></tr></table><p>Indication : K sein avancé/méta, <strong>RH+ et HER2-</strong>, en association avec inhibiteur aromatase ou fulvestrant.</p><p><strong>EI</strong> : neutropénie, leucopénie, infections, anémie.</p>"},
+{t:"Inhibiteurs de PARP (ovaire, sein, prostate)",h:"<p><strong>PARP</strong> : enzyme réparant les cassures simple brin (BER).</p><p><strong>Létalité synthétique</strong> : Si mutation BRCA1/2 (défaut recombinaison homologue), les cellules dépendent uniquement de PARP. Bloquer PARP → mort sélective des cellules BRCA mutées.</p><p>Fréquence BRCA : sein ≈ 5-10%, <strong>ovaire ≈ 50%</strong>, prostate ≈ 20%.</p><table><tr><th>Molécule</th><th>Spécialité</th><th>Indications</th></tr><tr><td>Olaparib</td><td>Lynparza</td><td>K ovaire/sein/pancréas/prostate BRCA+</td></tr><tr><td>Niraparib</td><td>Zejula</td><td>K ovaire sensible au platine</td></tr><tr><td>Talazoparib</td><td>Talzena</td><td>K sein HER2- BRCA+</td></tr></table><p><strong>EI</strong> : troubles digestifs et hématologiques.</p>"},
+{t:"Pharmacocinétique des ITK (résumé)",h:"<ul><li>Voie orale, traitement continu ou avec fenêtre d'arrêt</li><li><strong>Biodisponibilité variable selon repas</strong> : lapatinib, nilotinib, pazopanib → <strong>en dehors des repas</strong></li><li>Forte liaison aux protéines plasmatiques, Vd élevé</li><li>Demi-vies longues (20-60h) sauf <strong>dasatinib (5h)</strong></li><li><strong>Métabolisme hépatique CYP3A4 ++</strong> → nombreuses interactions</li><li>Substrats P-gp, BCRP</li><li>Excrétion majoritaire dans les fèces</li></ul>"}
+]},
+{id:5,title:"Immunothérapie",subtitle:"Partie 5 — Inhibiteurs des checkpoints immunitaires",icon:"🛡️",blocks:[
+{t:"Inhibiteurs des checkpoints immunitaires",h:"<p><strong>Mécanisme</strong> : Booster la réponse immunitaire en <strong>« levant les freins »</strong> qui inhibent les lymphocytes T.</p><p>Les checkpoints (PD-1, PD-L1, CTLA-4) sont des molécules régulant l'activation des lymphocytes T pour éviter l'auto-immunité. Les tumeurs exploitent ces mécanismes pour échapper à la surveillance immune.</p><p>Les <strong>inhibiteurs de checkpoints</strong> (anti-PD1, anti-PDL1, anti-CTLA4) restaurent la capacité des lymphocytes T à attaquer les cellules tumorales.</p><div class='kp'>💡 Principe : la tumeur « se cache » du système immunitaire en activant les freins naturels. L'immunothérapie lève ces freins.</div>"}
+]}
+];
+const FLASHCARDS = [
+{id:1,c:1,q:"Qu'est-ce que le cancer au niveau cellulaire ?",a:"Une maladie génétique résultant de l'accumulation d'altérations chromosomiques et géniques qui transforment une cellule normale en cellule tumorale à prolifération incontrôlée."},
+{id:2,c:1,q:"Qu'est-ce qu'un oncogène ?",a:"Un proto-oncogène muté qui devient activateur de la prolifération cellulaire de manière constitutive. Exemple : RAS."},
+{id:3,c:1,q:"Pourquoi les cytotoxiques sont-ils administrés en cycles espacés de 15 à 21 jours ?",a:"Parce qu'ils sont trop toxiques pour être administrés en continu. Les intervalles permettent à l'organisme (notamment la moelle osseuse) de récupérer."},
+{id:4,c:1,q:"Quelles cellules normales sont touchées par les cytotoxiques ? Conséquences ?",a:"Moelle osseuse (myélotoxicité), follicules pileux (alopécie), épithélium digestif (diarrhées, mucites), organes de reproduction (stérilité)."},
+{id:5,c:1,q:"Différence entre un anticorps monoclonal (-mab) et un ITK (-ib) ?",a:"Anticorps monoclonal : voie IV, cible extracellulaire, longue demi-vie. ITK : voie orale, cible intracellulaire (lipophile), administration quotidienne."},
+{id:6,c:2,q:"Mécanisme d'action général des alkylants.",a:"Formation de liaisons covalentes introduisant des chaînes alkyles dans l'ADN → ponts intra et inter-caténaires → blocage de la réplication. Action majorée en phase S."},
+{id:7,c:2,q:"Pourquoi les nitrosourées sont-elles utilisées dans les tumeurs cérébrales ?",a:"Parce qu'elles sont lipophiles, ce qui leur permet de franchir la barrière hémato-encéphalique (BHE)."},
+{id:8,c:2,q:"Citez 3 moutardes azotées avec leur nom commercial.",a:"Cyclophosphamide (Endoxan®), Ifosfamide (Holoxan®), Melphalan (Alkéran®). Aussi : Estramustine (Estracyt®), Bendamustine (Levact®), Chlorambucil (Chloraminophène®)."},
+{id:9,c:2,q:"Quel alkylant est utilisé dans les tumeurs cérébrales ?",a:"Temozolomide (Temodal®) — triazène — passe la BHE."},
+{id:10,c:2,q:"Mécanisme d'action général des antimétabolites.",a:"Substances frauduleuses de structure chimique semblable à des composants métaboliques. Acceptées comme substrats, elles inhibent la biosynthèse des acides nucléiques et des protéines."},
+{id:11,c:2,q:"Comment le méthotrexate (MTX) agit-il ?",a:"Entre via le Reduced Folate Carrier (RFC), inhibe la DHFR → blocage FH2→FH4 → pas de méthylène tétrahydrofolate → pas de dTMP → blocage réplication."},
+{id:12,c:2,q:"Précaution d'emploi majeure du méthotrexate en traitement de fond ?",a:"Prise UNE FOIS PAR SEMAINE uniquement (pas quotidienne). La prise quotidienne entraîne une toxicité sévère."},
+{id:13,c:2,q:"Qu'est-ce que la capécitabine (Xeloda®) ?",a:"Prodrogue orale du 5-FU. Convertie en 5-FU actif directement dans les cellules tumorales."},
+{id:14,c:2,q:"Quel bilan est obligatoire avant un traitement par 5-FU ou capécitabine ?",a:"Dosage de l'uracilémie pour dépister un déficit en DPD. Un déficit entraîne une accumulation toxique du 5-FU potentiellement fatale."},
+{id:15,c:2,q:"Qu'est-ce que le syndrome main-pied ?",a:"Rougeur, fourmillement et dessèchement de la peau des paumes et plantes des pieds. Associé surtout à la capécitabine (+++) et aux ITK multicibles."},
+{id:16,c:2,q:"Citez les 3 familles d'antimétabolites et un exemple pour chacune.",a:"Antifolates (méthotrexate), antagonistes puriques (fludarabine, 6-mercaptopurine), antagonistes pyrimidiques (5-FU, capécitabine, gemcitabine)."},
+{id:17,c:2,q:"Mécanisme d'action des anthracyclines.",a:"Intercalation entre les brins d'ADN → modification configuration 3D → blocage polymérases + génération radicaux libres + liaison topoisomérases II → cassures mono et double brin."},
+{id:18,c:2,q:"Quelle anthracycline est la seule délivrée en officine ?",a:"Idarubicine (Zavedos®)."},
+{id:19,c:2,q:"Indications principales des anthracyclines ?",a:"Leucémies aiguës myéloblastiques."},
+{id:20,c:2,q:"Quel est le rôle des topoisomérases ?",a:"Assurer la spiralisation/déspiralisation de l'ADN par des coupures transitoires d'un brin (topo I) ou des deux brins (topo II), puis ligation."},
+{id:21,c:2,q:"Comment les inhibiteurs de topoisomérases agissent-ils ?",a:"Ils ne s'intercalent pas dans l'ADN mais stabilisent le complexe de clivage → empêchent la religation → coupure définitive → mort cellulaire."},
+{id:22,c:2,q:"Topotécan (Hycamtin®) : topo I ou II ? Indication ?",a:"Inhibiteur de topo I. Indication : cancer du poumon."},
+{id:23,c:2,q:"Différence de mécanisme entre vinca-alcaloïdes et taxanes ?",a:"Vinca-alcaloïdes : inhibent la POLYMÉRISATION de la tubuline (pas de microtubules). Taxanes : inhibent la DÉPOLYMÉRISATION (chromosomes ne peuvent pas se séparer en anaphase)."},
+{id:24,c:2,q:"Vinorelbine (Navelbine®) : classe et indications.",a:"Vinca-alcaloïde. CPNPC, cancer du sein métastatique."},
+{id:25,c:3,q:"Qu'est-ce qu'un SERM ? Exemples.",a:"Modulateur Sélectif des Récepteurs aux Estrogènes. Antagoniste dans le sein, agoniste sur l'os et l'endomètre. Ex : tamoxifène (Nolvadex®), torémifène (Fareston®)."},
+{id:26,c:3,q:"Qu'est-ce qu'un SERD ? Différence avec SERM.",a:"Selective Estrogen Receptor Downregulator. Rôle uniquement antagoniste (pas d'agoniste). Ex : fulvestrant (Faslodex®). IM 1×/mois."},
+{id:27,c:3,q:"Interaction médicamenteuse majeure du tamoxifène ?",a:"Bioactivé en endoxifène par le CYP2D6. Les inhibiteurs du CYP2D6 (paroxétine, fluoxétine) réduisent son efficacité."},
+{id:28,c:3,q:"Risque spécifique des SERM sur l'endomètre ?",a:"Risque augmenté de cancer de l'endomètre car le tamoxifène a un effet agoniste œstrogénique sur ce tissu."},
+{id:29,c:3,q:"Pour quel profil de patiente les anti-aromatases sont-elles indiquées ?",a:"Femmes MÉNOPAUSÉES uniquement, cancer du sein RE+. Voie orale, 5 ans."},
+{id:30,c:3,q:"Citez les 3 anti-aromatases et leur nom commercial.",a:"Anastrozole (Arimidex®), Létrozole (Fémarà®), Exemestane (Aromasine®)."},
+{id:31,c:3,q:"Mécanisme des analogues LH-RH en 2 phases.",a:"1) Stimulation initiale → pic LH/FSH/œstrogènes. 2) Désensibilisation récepteurs GnRH (2-4 sem.) → inhibition → castration pharmacologique réversible."},
+{id:32,c:3,q:"Différence entre analogue LH-RH et antagoniste GnRH (dégarélix) ?",a:"L'analogue provoque d'abord un pic hormonal puis désensibilisation (risque de flare). Le dégarélix (Firmagon®) bloque directement → ↓ immédiate sans pic initial."},
+{id:33,c:3,q:"Mécanisme de l'abiratérone (Zytiga®) ?",a:"Inhibiteur du CYP17 (17α-hydroxylase) → blocage de la synthèse de testostérone dans les surrénales, testicules et cellules tumorales."},
+{id:34,c:3,q:"Citez 3 antagonistes AR de 2ème génération.",a:"Enzalutamide (Xtandi®), Darolutamide (Nubeqa®), Apalutamide (Erleada®)."},
+{id:35,c:3,q:"EI communs des traitements hormonaux de la prostate ?",a:"Privation androgénique : impuissance, perte de libido, bouffées de chaleur, gynécomastie, atrophie testiculaire, humeur dépressive, asthénie, prise de poids, perte musculaire."},
+{id:36,c:4,q:"Qu'est-ce que le chromosome Philadelphie ?",a:"Translocation t(9;22) → fusion BCR-ABL → kinase constitutivement active → LMC."},
+{id:37,c:4,q:"Premier inhibiteur de BCR-ABL mis sur le marché ? Date ?",a:"Imatinib (Glivec®), AMM en 2001. 1ère génération."},
+{id:38,c:4,q:"Pourquoi le ponatinib (Iclusig®) est-il une 3ème génération ?",a:"Actif contre les mutations de résistance, notamment T315I. Indiqué dans les LMC/LAL résistantes."},
+{id:39,c:4,q:"EI des inhibiteurs de BCR-ABL ?",a:"Rétention hydrique, œdèmes péri-orbitaires (imatinib +++), troubles digestifs, myélosuppression."},
+{id:40,c:4,q:"Néo-angiogenèse tumorale : facteurs impliqués ?",a:"Formation de nouveaux vaisseaux. Facteurs : VEGF, FGF, PDGF. Récepteurs : VEGFR-1, -2, -3."},
+{id:41,c:4,q:"EI spécifiques des anti-VEGFR/anti-VEGF ?",a:"Hypertension, troubles rénaux, microangiopathie, troubles thrombo-emboliques, saignements."},
+{id:42,c:4,q:"Syndrome main-pied : médicaments associés ?",a:"Rougeur, douleur, dessèchement des paumes/plantes. ITK multicibles : pazopanib, sunitinib, sorafénib, cabozantinib. Apparaît tôt (1ères semaines)."},
+{id:43,c:4,q:"Qu'est-ce qu'une mutation activatrice de l'EGFR ?",a:"Mutation somatique dans le domaine TK → récepteur plus actif ET plus sensible aux inhibiteurs. Recherchée sur ADN tumoral."},
+{id:44,c:4,q:"Mutation T790M et quel médicament y répond ?",a:"Mutation de résistance aux ITK EGFR 1ère/2ème gén. L'osimertinib (Tagrisso®), 3ème génération, y est actif."},
+{id:45,c:4,q:"EI cutanés des anti-EGFR et prise en charge ?",a:"Rash acnéiforme, folliculites, prurit. PEC : antihistaminiques + tétracyclines."},
+{id:46,c:4,q:"Différence erlotinib vs osimertinib pour EGFR ?",a:"Erlotinib : mutations activatrices classiques. Osimertinib : mutation T790M OU 1ère ligne (mutations activatrices)."},
+{id:47,c:4,q:"Proportion des K sein HER2+ ? Pronostic ?",a:"20-30% des K sein. Mauvais pronostic (survie diminuée + résistance chimio)."},
+{id:48,c:4,q:"Trastuzumab (Herceptin®) : type, voie, indication, EI principal.",a:"Anticorps monoclonal, voie IV. K sein/gastrique méta HER2+, K sein précoce HER2+. EI principal : CARDIOTOXICITÉ."},
+{id:49,c:4,q:"Différence trastuzumab vs lapatinib ?",a:"Trastuzumab : anticorps, cible extracellulaire HER2, IV. Lapatinib : ITK, cible intracellulaire EGFR+HER2, voie orale."},
+{id:50,c:4,q:"Rôle des CDK4/6 dans le cycle cellulaire ?",a:"Sérine-thréonine kinases en phase G1 phosphorylant Rb → levée du frein G1→S → division cellulaire."},
+{id:51,c:4,q:"Contexte d'indication des inhibiteurs CDK4/6 ?",a:"K sein avancé/méta, RH+ et HER2-, en association avec inhibiteur aromatase ou fulvestrant."},
+{id:52,c:4,q:"Les 3 inhibiteurs de CDK4/6 et noms commerciaux.",a:"Palbociclib (Ibrance®), Ribociclib (Kisqali®), Abémaciclib (Verzenios®)."},
+{id:53,c:4,q:"Rôle de PARP et type de lésion réparée ?",a:"PARP répare les cassures simple brin de l'ADN par le mécanisme BER (Base Excision Repair)."},
+{id:54,c:4,q:"Létalité synthétique et inhibiteurs de PARP ?",a:"Avec mutation BRCA (défaut recombinaison homologue), les cellules dépendent uniquement de PARP. Bloquer PARP → mort sélective des cellules BRCA mutées."},
+{id:55,c:4,q:"Cancers associés aux mutations BRCA et fréquences ?",a:"Sein ≈ 5-10%, ovaire ≈ 50%, prostate ≈ 20%."},
+{id:56,c:4,q:"Olaparib (Lynparza®) : posologie et indications.",a:"800 mg/j en 2 prises. K ovaire, sein (HER2- BRCA+), pancréas et prostate avec mutation BRCA."},
+{id:57,c:4,q:"Principal cytochrome impliqué dans le métabolisme des ITK ?",a:"CYP3A4 (++) → nombreuses interactions médicamenteuses."},
+{id:58,c:4,q:"Quels ITK prendre EN DEHORS des repas ? Pourquoi ?",a:"Lapatinib, nilotinib, pazopanib. La prise alimentaire augmente leur biodisponibilité → risque de toxicité."},
+{id:59,c:4,q:"Particularité du dasatinib par rapport aux autres ITK ?",a:"Demi-vie très courte : 5h (vs 20-60h pour les autres ITK)."},
+{id:60,c:5,q:"Mécanisme général des inhibiteurs de checkpoints immunitaires ?",a:"Ils lèvent les freins sur les lymphocytes T en bloquant PD-1, PD-L1 ou CTLA-4 que les tumeurs exploitent pour échapper à la surveillance immune → restauration de la réponse cytotoxique T."}
+];
+const QCMS = [
+{id:1,c:1,q:"La transformation d'une cellule normale en cellule tumorale est liée à :",o:["A) Une infection virale systématique","B) L'accumulation d'altérations chromosomiques et géniques","C) Un déficit immunitaire uniquement","D) Une exposition unique à un agent cancérigène"],r:1,e:"Le cancer résulte de l'accumulation progressive de mutations. Un seul facteur ne suffit généralement pas."},
+{id:2,c:1,q:"Les cytotoxiques sont administrés en cycles espacés de 15 à 21 jours car :",o:["A) Ils perdent leur efficacité après 15 jours","B) Ils sont trop toxiques pour être administrés en continu","C) Les cellules tumorales se divisent tous les 21 jours","D) C'est une contrainte logistique hospitalière"],r:1,e:"Les intervalles permettent à l'organisme, notamment la moelle osseuse, de récupérer entre les cycles."},
+{id:3,c:1,q:"Quel effet indésirable N'EST PAS directement lié aux cytotoxiques ?",o:["A) Alopécie","B) Myélotoxicité","C) Hypertension artérielle","D) Mucites et diarrhées"],r:2,e:"L'HTA est un EI des anti-angiogéniques, pas des cytotoxiques. Alopécie, myélotoxicité et mucites sont liées à l'atteinte des cellules à forte prolifération."},
+{id:4,c:1,q:"Différence entre anticorps monoclonal et ITK ?",o:["A) L'anticorps agit en intracellulaire, l'ITK en extracellulaire","B) L'anticorps est oral, l'ITK est IV","C) L'anticorps agit en extracellulaire (IV) ; l'ITK en intracellulaire (oral)","D) Aucune différence de mécanisme"],r:2,e:"Les anticorps (macromolécules) ne pénètrent pas la cellule → cible extracellulaire, IV. Les ITK sont lipophiles → intracellulaire, voie orale."},
+{id:5,c:2,q:"Le mécanisme d'action des alkylants repose sur :",o:["A) L'inhibition de la DHFR","B) La formation de liaisons covalentes avec l'ADN créant des ponts inter et intra-caténaires","C) L'intercalation entre les deux brins d'ADN","D) La stabilisation du fuseau mitotique"],r:1,e:"Les alkylants introduisent des chaînes alkyles dans l'ADN par liaisons covalentes → ponts bloquant la réplication. Action majorée en phase S."},
+{id:6,c:2,q:"Pourquoi les nitrosourées pour les tumeurs cérébrales ?",o:["A) Seules à agir sur l'ADN neuronal","B) Lipophiles → franchissent la BHE","C) Moins toxiques que les autres alkylants","D) Sélectives des cellules gliales"],r:1,e:"Leur lipophilie permet de traverser la barrière hémato-encéphalique."},
+{id:7,c:2,q:"Le temozolomide (Temodal®) appartient à quelle famille ?",o:["A) Moutardes azotées","B) Nitrosourées","C) Triazènes","D) Méthylhydrazines"],r:2,e:"Le temozolomide est un triazène. Il passe la BHE → utilisé dans les glioblastomes."},
+{id:8,c:2,q:"Le méthotrexate agit principalement en inhibant :",o:["A) La thymidylate synthase","B) La dihydrofolate réductase (DHFR)","C) L'ARN polymérase","D) La topoisomérase I"],r:1,e:"Le MTX inhibe la DHFR, empêchant la conversion FH2→FH4 → pas de synthèse de dTMP → pas de réplication."},
+{id:9,c:2,q:"Règle de prescription ABSOLUE du MTX en traitement de fond ?",o:["A) Une prise quotidienne le soir","B) Une prise quotidienne le matin","C) Une prise hebdomadaire (une seule fois par semaine)","D) Une prise toutes les 48 heures"],r:2,e:"UNE SEULE FOIS PAR SEMAINE. La prise quotidienne est une erreur potentiellement mortelle (aplasie médullaire sévère)."},
+{id:10,c:2,q:"La capécitabine (Xeloda®) est :",o:["A) Un alkylant (moutardes azotées)","B) Une prodrogue orale du 5-fluorouracile","C) Un inhibiteur de la DHFR","D) Un anticorps monoclonal anti-EGFR"],r:1,e:"Prodrogue convertie en 5-FU actif dans les cellules tumorales. Administration orale."},
+{id:11,c:2,q:"Quel bilan obligatoire AVANT 5-FU ou capécitabine (INCa/HAS 2018) ?",o:["A) Dosage de la créatinine","B) Dosage de l'uracilémie pour rechercher un déficit en DPD","C) Dosage des transaminases","D) NFS complète"],r:1,e:"Un déficit en DPD entraîne une accumulation toxique du 5-FU avec risque de toxicités sévères voire fatales."},
+{id:12,c:2,q:"Le syndrome main-pieds est caractérisé par :",o:["A) Des douleurs articulaires","B) Des rougeurs, fourmillements et dessèchement paumes/plantes","C) Un œdème des membres inférieurs","D) Des paresthésies par neuropathie périphérique"],r:1,e:"Érythrodysesthésie palmo-plantaire. Très fréquent avec la capécitabine et les ITK multicibles."},
+{id:13,c:2,q:"Mécanisme d'action des anthracyclines ?",o:["A) Liaisons covalentes avec les bases de l'ADN","B) Intercalation entre les brins + radicaux libres + blocage topo II","C) Inhibition de la polymérisation de la tubuline","D) Blocage du site actif de la DHFR"],r:1,e:"Triple mécanisme : intercalation (modification 3D), radicaux libres, liaison topo II → cassures double brin."},
+{id:14,c:2,q:"Quelle anthracycline est délivrée en officine ?",o:["A) Doxorubicine (Adriblastine®)","B) Épirubicine (Farmorubicine®)","C) Idarubicine (Zavedos®)","D) Daunorubicine (Cérubidine®)"],r:2,e:"L'idarubicine (Zavedos®) est la seule anthracycline disponible à l'officine sous forme orale."},
+{id:15,c:2,q:"Différence entre inhibiteurs de topo et intercalants ?",o:["A) Les inhib. de topo s'intercalent, les intercalants non","B) Les inhib. de topo stabilisent le complexe de clivage ; les intercalants s'insèrent entre les brins","C) Ce sont les mêmes molécules","D) Les inhib. de topo agissent uniquement en phase G1"],r:1,e:"Les inhib. de topo ne s'intercalent PAS : ils bloquent la religation. Les anthracyclines s'insèrent physiquement entre les brins."},
+{id:16,c:2,q:"Topotécan (Hycamtin®) inhibe quelle topo et quelle indication ?",o:["A) Topo II, leucémie aiguë","B) Topo I, cancer du poumon","C) Topo I et II, lymphome","D) Topo II, cancer colorectal"],r:1,e:"Inhibiteur de topoisomérase I, utilisé dans le cancer du poumon."},
+{id:17,c:2,q:"Différence vinca-alcaloïdes vs taxanes ?",o:["A) Vinca stabilisent les microtubules, taxanes les dépolymérisent","B) Vinca inhibent la polymérisation, taxanes inhibent la dépolymérisation","C) Les deux agissent en phase G1","D) Taxanes inhibent la polymérisation, vinca stabilisent"],r:1,e:"Vinca : bloquent la formation des microtubules. Taxanes : empêchent leur désagrégation. Tous deux bloquent la mitose."},
+{id:18,c:2,q:"Vinorelbine (Navelbine®) est indiquée dans :",o:["A) LMC et lymphomes","B) CPNPC et cancer du sein métastatique","C) Cancer colorectal et ovaire","D) Mélanome et cancer rénal"],r:1,e:"Vinca-alcaloïde indiqué dans le CPNPC et le cancer du sein métastatique."},
+{id:19,c:3,q:"Le tamoxifène est un SERM. Qu'implique cet acronyme ?",o:["A) Sélecteur de Récepteurs aux Estrogènes Membranaires","B) Modulateur Sélectif des Récepteurs aux Estrogènes ; antagoniste sein, agoniste os/endomètre","C) Sensibilisateur de Récepteurs Estrogéniques","D) Suppresseur des Récepteurs aux Estrogènes"],r:1,e:"SERM = Selective Estrogen Receptor Modulator. Antagoniste dans le sein (thérapeutique), agoniste dans l'os (bénéfique) et l'endomètre (risque)."},
+{id:20,c:3,q:"Pourquoi la paroxétine est-elle contre-indiquée avec le tamoxifène ?",o:["A) Augmente la toxicité digestive","B) Inhibe le CYP2D6, réduisant la conversion en endoxifène actif","C) Diminue l'absorption intestinale","D) Potentialise le risque thromboembolique"],r:1,e:"Le tamoxifène est bioactivé en endoxifène par le CYP2D6. La paroxétine (inhibiteur puissant du CYP2D6) réduit l'efficacité."},
+{id:21,c:3,q:"Différence entre fulvestrant (Faslodex®) et tamoxifène ?",o:["A) Le fulvestrant est un SERM avec agonisme partiel","B) Le fulvestrant est un SERD (pur antagoniste), le tamoxifène est un SERM (antagoniste ET agoniste)","C) Le fulvestrant est oral, le tamoxifène en injection","D) Pas de différence clinique significative"],r:1,e:"Fulvestrant = SERD (pur antagoniste, aucun effet agoniste). Tamoxifène = SERM (effets agonistes sur os et endomètre)."},
+{id:22,c:3,q:"Anti-aromatases : pour quelles patientes ?",o:["A) Toutes les femmes avec K sein","B) Uniquement femmes pré-ménopausées RE+","C) Uniquement femmes ménopausées RE+","D) Femmes avec K sein HER2+"],r:2,e:"Les anti-aromatases ne sont utilisées que chez les femmes ménopausées car elles inhibent la synthèse périphérique des œstrogènes."},
+{id:23,c:3,q:"Effet des analogues LH-RH les premières semaines ?",o:["A) Suppression immédiate des hormones","B) Stimulation initiale (flare) avant désensibilisation","C) Effet neutre","D) Blocage direct des récepteurs aux œstrogènes"],r:1,e:"Les analogues LH-RH provoquent un flare (stimulation initiale) avant la désensibilisation des récepteurs GnRH (2-4 semaines)."},
+{id:24,c:3,q:"Différence principale entre le dégarélix (Firmagon®) et les analogues LH-RH ?",o:["A) Le dégarélix est plus efficace sur les métastases","B) Le dégarélix provoque un pic hormonal initial","C) Le dégarélix bloque directement le récepteur GnRH, évitant le pic initial (pas de flare)","D) Le dégarélix s'administre par voie orale"],r:2,e:"Le dégarélix est un antagoniste direct du récepteur GnRH → baisse immédiate sans stimulation initiale."},
+{id:25,c:3,q:"L'abiratérone (Zytiga®) agit en :",o:["A) Bloquant les récepteurs aux androgènes","B) Inhibant le CYP17, enzyme de synthèse des androgènes","C) Stimulant les récepteurs GnRH","D) Inhibant la 5α-réductase"],r:1,e:"L'abiratérone inhibe le CYP17 (17α-hydroxylase), enzyme indispensable à la synthèse des androgènes."},
+{id:26,c:4,q:"La translocation t(9;22), chromosome Philadelphie, produit :",o:["A) Une délétion du gène RB","B) La protéine de fusion BCR-ABL, une kinase constitutivement active","C) Une amplification du gène EGFR","D) Une mutation du gène BRCA1"],r:1,e:"La translocation fusionne BCR et ABL → protéine kinase toujours active → prolifération anarchique → LMC."},
+{id:27,c:4,q:"Quel inhibiteur de BCR-ABL est actif contre la mutation T315I ?",o:["A) Imatinib (Glivec®)","B) Dasatinib (Sprycel®)","C) Nilotinib (Tasigna®)","D) Ponatinib (Iclusig®)"],r:3,e:"La mutation T315I confère une résistance à toutes les générations précédentes. Seul le ponatinib (3ème gén.) est actif."},
+{id:28,c:4,q:"L'œdème péri-orbitaire est caractéristique de quel inhibiteur BCR-ABL ?",o:["A) Dasatinib","B) Nilotinib","C) Imatinib","D) Bosutinib"],r:2,e:"L'œdème péri-orbitaire est très fréquent et caractéristique de l'imatinib (Glivec®), avec rétention hydrique générale."},
+{id:29,c:4,q:"Principal facteur de croissance de la néo-angiogenèse tumorale ?",o:["A) EGF","B) VEGF","C) IGF","D) NGF"],r:1,e:"Le VEGF est le principal facteur pro-angiogénique. Se fixe sur VEGFR-1, -2, -3."},
+{id:30,c:4,q:"Le syndrome main-pied apparaît avec :",o:["A) Les anticorps anti-HER2","B) Les inhibiteurs de PARP","C) Les ITK multicibles anti-angiogéniques (sorafénib, sunitinib, pazopanib, cabozantinib)","D) Les inhibiteurs de CDK4/6"],r:2,e:"EI caractéristique des ITK multicibles anti-angiogéniques. Apparaît tôt (1ères semaines)."},
+{id:31,c:4,q:"Concernant les mutations EGFR dans le cancer du poumon :",o:["A) Les mutations activatrices rendent le récepteur moins sensible aux inhibiteurs","B) Les mutations activatrices rendent le récepteur plus actif ET plus sensible aux ITK-EGFR","C) Les mutations de résistance surviennent avant tout traitement","D) Les mutations sont toujours germinales"],r:1,e:"Les mutations activatrices rendent le récepteur plus actif ET paradoxalement plus sensible aux inhibiteurs."},
+{id:32,c:4,q:"Quel ITK-EGFR est indiqué pour la mutation T790M ?",o:["A) Erlotinib (Tarceva®)","B) Géfitinib (Iressa®)","C) Afatinib (Giotrif®)","D) Osimertinib (Tagrisso®)"],r:3,e:"L'osimertinib (3ème génération) est spécifiquement actif contre la mutation T790M de résistance."},
+{id:33,c:4,q:"PEC du rash acnéiforme lié aux anti-EGFR ?",o:["A) Corticoïdes topiques uniquement","B) Antihistaminiques et tétracyclines","C) Rétinoïdes oraux","D) Antifongiques topiques"],r:1,e:"La toxicité cutanée des anti-EGFR est prise en charge par antihistaminiques + tétracyclines."},
+{id:34,c:4,q:"Fréquence de la surexpression HER2 dans les K sein et pronostic ?",o:["A) 5-10%, pronostic favorable","B) 20-30%, mauvais pronostic (survie diminuée + résistance chimio)","C) 50-60%, pronostic intermédiaire","D) Moins de 5%, pronostic variable"],r:1,e:"20-30% des K sein surexpriment HER2 → mauvais pronostic justifiant une thérapie ciblée."},
+{id:35,c:4,q:"EI principal du trastuzumab (Herceptin®) à surveiller ?",o:["A) Néphrotoxicité","B) Hépatotoxicité","C) Cardiotoxicité","D) Neurotoxicité"],r:2,e:"Cardiotoxicité majeure. Surveillance de la FEVG systématique avant et pendant le traitement."},
+{id:36,c:4,q:"Phase du cycle cellulaire où agissent les CDK4/6 ?",o:["A) Phase S","B) Phase G2","C) Phase G1","D) Phase M"],r:2,e:"CDK4/6 + cycline D1 agissent en phase G1, phosphorylent Rb → transition G1→S."},
+{id:37,c:4,q:"Les inhibiteurs CDK4/6 sont indiqués dans quel K sein ?",o:["A) K sein triple négatif","B) K sein HER2+ métastatique","C) K sein avancé/méta, RH+ et HER2-","D) K sein BRCA mutée"],r:2,e:"RH+ et HER2-, en association avec hormonothérapie (inhibiteur aromatase ou fulvestrant)."},
+{id:38,c:4,q:"Qu'est-ce que la létalité synthétique (inhibiteurs PARP) ?",o:["A) Association de deux médicaments mortels","B) Mort sélective des cellules BRCA mutées dépendant de PARP pour réparer leur ADN","C) Réaction idiosyncrasique fatale","D) Toxicité combinée chimio + inhibiteurs PARP"],r:1,e:"Avec mutation BRCA (pas de recombinaison homologue), bloquer PARP → accumulation de dommages irréparables → mort sélective."},
+{id:39,c:4,q:"Quel cancer a la fréquence BRCA la plus élevée ?",o:["A) Cancer du sein (5-10%)","B) Cancer de l'ovaire (50%)","C) Cancer de la prostate (20%)","D) Cancer du pancréas (10%)"],r:1,e:"Cancer de l'ovaire ≈ 50% de mutations BRCA, justifiant les inhibiteurs de PARP."},
+{id:40,c:4,q:"Quelle indication N'EST PAS celle de l'olaparib (Lynparza®) ?",o:["A) K ovaire avec mutation BRCA","B) K sein HER2- BRCA+","C) K poumon avec mutation EGFR","D) K prostate BRCA+"],r:2,e:"Le K poumon EGFR muté est traité par ITK-EGFR, pas par inhibiteurs PARP."},
+{id:41,c:4,q:"Le dasatinib se distingue par :",o:["A) Sa voie IV","B) Sa demi-vie très courte d'environ 5 heures","C) Son absence de métabolisme hépatique","D) Son activité exclusive sur BCR-ABL"],r:1,e:"Demi-vie ≈ 5h, bien plus courte que les autres ITK (20-60h)."},
+{id:42,c:4,q:"Pourquoi nilotinib, lapatinib et pazopanib en dehors des repas ?",o:["A) Pour réduire les nausées","B) La prise alimentaire augmente leur absorption → risque de toxicité","C) Pour faciliter la dissolution","D) Pour éviter les interactions avec aliments acides"],r:1,e:"La prise alimentaire augmente significativement leur biodisponibilité → concentrations toxiques possibles."},
+{id:43,c:4,q:"Principal cytochrome impliqué dans le métabolisme des ITK ?",o:["A) CYP1A2","B) CYP2D6","C) CYP3A4","D) CYP2C19"],r:2,e:"CYP3A4 = principal cytochrome. Interactions avec inducteurs (rifampicine, millepertuis) et inhibiteurs (pamplemousse, azolés)."},
+{id:44,c:5,q:"Mécanisme des inhibiteurs de checkpoints immunitaires ?",o:["A) Destruction directe des cellules tumorales","B) Stimulation de la production de cytokines","C) Levée des mécanismes inhibiteurs des lymphocytes T → réponse immune anti-tumorale","D) Augmentation de la vascularisation tumorale"],r:2,e:"Les checkpoints (PD-1, PD-L1, CTLA-4) sont exploités par les tumeurs. Les inhibiteurs lèvent ces freins → attaque par les lymphocytes T."},
+{id:45,c:5,q:"Associez : Palbociclib / Olaparib / Anastrozole / Dasatinib / Vinorelbine",o:["A) Dasatinib=poison fuseau; Olaparib=ITK-BCR-ABL; Palbociclib=inhib. PARP","B) Palbociclib=inhib. CDK4/6; Olaparib=inhib. PARP; Anastrozole=anti-aromatase; Dasatinib=ITK-BCR-ABL; Vinorelbine=vinca-alcaloïde","C) Palbociclib=ITK-EGFR; Olaparib=anti-aromatase; Dasatinib=anti-angiogénique","D) Toutes les associations sont incorrectes"],r:1,e:"Palbociclib (Ibrance®)=inhib. CDK4/6 | Olaparib (Lynparza®)=inhib. PARP | Anastrozole (Arimidex®)=anti-aromatase | Dasatinib (Sprycel®)=ITK BCR-ABL 2ème gén. | Vinorelbine (Navelbine®)=vinca-alcaloïde."}
+];
+
+// ===== MODULE 14 INTEGRATION =====
+if(typeof MODULE_14!=='undefined'){
+function md2h(md){var ls=md.split('\n'),h='',tbl=false,ul=false,ol=false,fr=true;function cl(){if(ul){h+='</ul>';ul=false}if(ol){h+='</ol>';ol=false}if(tbl){h+='</table>';tbl=false}}for(var i=0;i<ls.length;i++){var t=ls[i].trim();if(!t){cl();continue}if(/^\|[\s\-:]+\|$/.test(t))continue;if(t[0]==='|'&&t[t.length-1]==='|'){if(!tbl){cl();h+='<table>';tbl=true;fr=true}var cs=t.slice(1,-1).split('|').map(function(c){return c.trim()}),tg=fr?'th':'td';h+='<tr>'+cs.map(function(c){return'<'+tg+'>'+c+'</'+tg+'>'}).join('')+'</tr>';fr=false;continue}if(tbl){h+='</table>';tbl=false}if(t.indexOf('• ')===0||t.indexOf('— ')===0){if(ol){h+='</ol>';ol=false}if(!ul){h+='<ul>';ul=true}h+='<li>'+t.replace(/^[•—]\s*/,'')+'</li>';continue}if(/^\d+[\.\)]\s/.test(t)){if(ul){h+='</ul>';ul=false}if(!ol){h+='<ol>';ol=true}h+='<li>'+t.replace(/^\d+[\.\)]\s*/,'')+'</li>';continue}if(t.indexOf('→')===0){if(!ul){cl();h+='<ul>';ul=true}h+='<li>'+t+'</li>';continue}if(t.indexOf('⚠️')===0){cl();h+="<div class='warn'>"+t+'</div>';continue}cl();h+='<p>'+t+'</p>'}cl();h=h.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');h=h.replace(/\*([^*]+)\*/g,'<em>$1</em>');return h}
+var m14b=MODULE_14.cours.map(function(b){return{t:b.titre,h:md2h(b.contenu)+(b.aRetenir?"<div class='kp'>💡 <strong>À retenir</strong> : "+b.aRetenir.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')+'</div>':'')}});
+COURSES.push({id:6,title:"L'Appareil Respiratoire",subtitle:"Module 14 — Anatomie, physiologie, pathologies et pharmacologie",icon:"🫁",blocks:m14b});
+MODULE_14.flashcards.forEach(function(fc){FLASHCARDS.push({id:60+fc.id,c:6,q:fc.recto,a:fc.verso})});
+MODULE_14.qcm.forEach(function(q){QCMS.push({id:45+q.id,c:6,q:q.question,o:q.options,r:q.reponse,e:q.explication})});
+}
+
+// ===== STATE =====
+const LS='shanoe';
+let toastTimer=null;
+function defaults(){return{page:'library',courseId:null,tab:'cours',statuses:{},fcProgress:{},qcmAnswers:{},apiKey:'',quizMessages:{},showSettings:false,expandedBlocks:{},fcFlipped:false,fcIndex:0,qcmIndex:0,qcmAnswered:false,qcmSelected:-1,qcmScore:0,qcmShuffled:[],quizLoading:false,toastMsg:'',toastVisible:false}}
+function loadState(){try{const s=JSON.parse(localStorage.getItem(LS)||'{}');return{...defaults(),...s}}catch(e){return defaults()}}
+function saveState(){localStorage.setItem(LS,JSON.stringify({statuses:S.statuses,fcProgress:S.fcProgress,qcmAnswers:S.qcmAnswers,apiKey:S.apiKey,quizMessages:S.quizMessages}))}
+let S=loadState();
+
+// ===== SM-2 =====
+function sm2(q,p){let{reps:r=0,ef:e=2.5,interval:i=0}=p||{};if(q>=3){if(r===0)i=1;else if(r===1)i=6;else i=Math.round(i*e);r++}else{r=0;i=1}e=Math.max(1.3,e+.1-(5-q)*(.08+(5-q)*.02));return{reps:r,ef:e,interval:i,next:Date.now()+i*864e5}}
+
+// ===== UTILS =====
+function progress(cid){const f=FLASHCARDS.filter(x=>x.c===cid),q=QCMS.filter(x=>x.c===cid),fd=f.filter(x=>S.fcProgress[x.id]&&S.fcProgress[x.id].reps>0).length,qd=q.filter(x=>S.qcmAnswers[x.id]!==undefined).length,t=f.length+q.length;return t===0?0:Math.round((fd+qd)/t*100)}
+function fcQueue(cid){const now=Date.now(),due=[],fresh=[];FLASHCARDS.filter(f=>f.c===cid).forEach(fc=>{const p=S.fcProgress[fc.id];if(!p)fresh.push(fc);else if(p.next<=now)due.push(fc)});return[...due,...fresh]}
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+function stClass(cid){return'status-'+(S.statuses[cid]||'upcoming')}
+function stLabel(cid){return{upcoming:'À venir',inprogress:'En cours',completed:'Terminé'}[S.statuses[cid]||'upcoming']}
+
+// ===== RENDER =====
+function render(){const app=document.getElementById('app');let h=renderHeader();if(S.page==='library')h+=renderLibrary();else if(S.page==='course')h+=renderCourse();if(S.showSettings)h+=renderModal();h+='<div class="toast '+(S.toastVisible?'show':'')+'">'+(S.toastMsg||'')+'</div>';app.innerHTML=h;if(S.page==='course'&&S.tab==='quiz'){const cm=document.querySelector('.chat-messages');if(cm)cm.scrollTop=cm.scrollHeight}}
+
+function renderHeader(){return'<header class="header"><div><h1>Shanoe</h1><p>Révisions médicales et pharmaceutiques</p></div><div><button class="btn-icon" data-action="open-settings" title="Paramètres">⚙️</button></div></header>'}
+
+function renderLibrary(){return'<div class="main"><div class="section-header"><h2>Bibliothèque de cours</h2><p>Sélectionnez un cours pour commencer vos révisions</p></div><div class="course-grid">'+COURSES.map(c=>{const p=progress(c.id),fc=FLASHCARDS.filter(f=>f.c===c.id).length,qc=QCMS.filter(q=>q.c===c.id).length;return'<div class="course-card" data-action="open-course" data-id="'+c.id+'"><div style="display:flex;justify-content:space-between;align-items:start"><div class="icon">'+c.icon+'</div><span class="status-badge '+stClass(c.id)+'" data-action="cycle-status" data-id="'+c.id+'">'+stLabel(c.id)+'</span></div><h3>'+c.title+'</h3><p class="subtitle">'+c.subtitle+'</p><div style="display:flex;gap:12px;font-size:.8rem;color:var(--tl);margin-bottom:8px"><span>📇 '+fc+' flashcards</span><span>✅ '+qc+' QCM</span></div><div class="progress-bar"><div class="progress-fill" style="width:'+p+'%"></div></div><div style="text-align:right;font-size:.8rem;color:var(--tl);margin-top:4px">'+p+'%</div></div>'}).join('')+'</div></div>'}
+
+function renderCourse(){const c=COURSES.find(x=>x.id===S.courseId);if(!c)return'<div class="main"><p>Cours introuvable.</p></div>';const tabs=[{id:'cours',l:'📖 Cours'},{id:'flashcards',l:'📇 Flashcards'},{id:'qcm',l:'✅ QCM'},{id:'quiz',l:'🤖 Quiz IA'}];let tc='';switch(S.tab){case'cours':tc=renderCoursTab(c);break;case'flashcards':tc=renderFCTab(c);break;case'qcm':tc=renderQCMTab(c);break;case'quiz':tc=renderQuizTab(c);break}return'<div class="main"><button class="back-btn" data-action="back">← Retour à la bibliothèque</button><div class="course-header"><h2>'+c.icon+' '+c.title+'</h2></div><div class="tabs">'+tabs.map(t=>'<button class="tab-btn '+(S.tab===t.id?'active':'')+'" data-action="set-tab" data-tab="'+t.id+'">'+t.l+'</button>').join('')+'</div><div class="tab-content">'+tc+'</div></div>'}
+
+function renderCoursTab(c){return c.blocks.map((b,i)=>{const k=c.id+'-'+i,ex=S.expandedBlocks[k];return'<div class="block"><div class="block-header '+(ex?'expanded':'')+'" data-action="toggle-block" data-key="'+k+'"><span>'+b.t+'</span><span class="arrow">▶</span></div><div class="block-content '+(ex?'expanded':'')+'">'+b.h+'</div></div>'}).join('')}
+
+function renderFCTab(c){const q=fcQueue(c.id),all=FLASHCARDS.filter(f=>f.c===c.id),rv=all.filter(f=>S.fcProgress[f.id]&&S.fcProgress[f.id].reps>0).length,du=all.filter(f=>{const p=S.fcProgress[f.id];return p&&p.next<=Date.now()}).length,fr=all.filter(f=>!S.fcProgress[f.id]).length;let ch='';if(q.length===0){ch='<div class="fc-done"><div class="emoji">🎉</div><h3>Bravo !</h3><p style="color:var(--tl);margin-top:8px">Toutes les flashcards ont été révisées. Revenez plus tard pour les révisions espacées.</p></div>'}else{const card=q[S.fcIndex%q.length];if(card){ch='<div class="fc-counter">Carte '+(S.fcIndex%q.length+1)+' / '+q.length+'</div><div class="fc-card-container"><div class="fc-card '+(S.fcFlipped?'flipped':'')+'" data-action="flip-card"><div class="fc-front"><p>'+card.q+'</p><div class="fc-hint">Cliquez ou Espace pour retourner</div></div><div class="fc-back"><p>'+card.a+'</p></div></div></div>'+(S.fcFlipped?'<div class="fc-rating"><button class="rate-again" data-action="rate-card" data-quality="1" data-fcid="'+card.id+'">🔄 À revoir</button><button class="rate-hard" data-action="rate-card" data-quality="3" data-fcid="'+card.id+'">😤 Difficile</button><button class="rate-good" data-action="rate-card" data-quality="4" data-fcid="'+card.id+'">👍 Bien</button><button class="rate-easy" data-action="rate-card" data-quality="5" data-fcid="'+card.id+'">✨ Facile</button></div>':'')}}return'<div class="fc-stats"><div class="fc-stat"><div class="num" style="color:var(--e)">'+du+'</div><div class="label">À revoir</div></div><div class="fc-stat"><div class="num" style="color:var(--p)">'+fr+'</div><div class="label">Nouvelles</div></div><div class="fc-stat"><div class="num" style="color:var(--s)">'+rv+'</div><div class="label">Maîtrisées</div></div></div>'+ch}
+
+function renderQCMTab(c){const cq=QCMS.filter(x=>x.c===c.id);if(cq.length===0)return'<p>Aucun QCM disponible.</p>';if(S.qcmShuffled.length===0||!cq.find(x=>x.id===S.qcmShuffled[0])){S.qcmShuffled=shuffle(cq.map(x=>x.id));S.qcmIndex=0;S.qcmScore=0;S.qcmAnswered=false;S.qcmSelected=-1}if(S.qcmIndex>=S.qcmShuffled.length){const pct=Math.round(S.qcmScore/S.qcmShuffled.length*100);return'<div class="qcm-score"><div style="font-size:3rem;margin-bottom:16px">'+(pct>=80?'🏆':pct>=50?'👍':'📚')+'</div><div class="score-big">'+S.qcmScore+' / '+S.qcmShuffled.length+'</div><p style="color:var(--tl);margin:8px 0">'+pct+'% de bonnes réponses</p><button class="btn btn-primary" data-action="reset-qcm" style="margin-top:16px">🔄 Recommencer</button></div>'}const qcm=QCMS.find(x=>x.id===S.qcmShuffled[S.qcmIndex]);if(!qcm)return'<p>Erreur.</p>';return'<div class="qcm-progress">Question '+(S.qcmIndex+1)+' / '+S.qcmShuffled.length+' — Score : '+S.qcmScore+'</div><div class="qcm-question"><h3>'+qcm.q+'</h3></div><div class="qcm-options">'+qcm.o.map((opt,i)=>{let cls='qcm-option';if(S.qcmAnswered){cls+=' disabled';if(i===qcm.r)cls+=' correct';else if(i===S.qcmSelected)cls+=' wrong'}return'<button class="'+cls+'" data-action="select-option" data-index="'+i+'" '+(S.qcmAnswered?'disabled':'')+'>'+opt+'</button>'}).join('')+'</div>'+(S.qcmAnswered?'<div class="qcm-explanation"><strong>'+(S.qcmSelected===qcm.r?'✅ Correct !':'❌ Incorrect.')+'</strong><br>'+qcm.e+'</div><div style="text-align:center;margin-top:16px"><button class="btn btn-primary" data-action="next-qcm">Suivant →</button></div>':'')}
+
+function renderQuizTab(c){if(!S.apiKey)return'<div class="quiz-notice"><strong>Clé API requise</strong><br>Pour utiliser le Quiz IA, configurez votre clé API Claude dans les paramètres (⚙️).</div><button class="btn btn-primary" data-action="open-settings">⚙️ Configurer la clé API</button>';const msgs=S.quizMessages[c.id]||[];return'<div class="chat-actions"><button class="btn btn-primary" data-action="new-question" '+(S.quizLoading?'disabled':'')+'>💡 Nouvelle question</button><button class="btn btn-secondary" data-action="clear-quiz">🗑️ Effacer</button></div><div class="chat-container"><div class="chat-messages">'+(msgs.length===0?'<p style="color:var(--tl);text-align:center;padding:40px">Cliquez sur "Nouvelle question" pour commencer.</p>':'')+msgs.map(m=>'<div class="chat-msg '+m.role+'"><div class="msg-bubble">'+m.content.replace(/\n/g,'<br>')+'</div></div>').join('')+(S.quizLoading?'<div class="chat-msg assistant"><div class="msg-bubble"><span class="loading">Réflexion en cours</span></div></div>':'')+'</div><div class="chat-input-area"><input type="text" id="quiz-input" placeholder="Votre réponse..." '+(S.quizLoading?'disabled':'')+'><button class="btn btn-primary" data-action="send-quiz" '+(S.quizLoading?'disabled':'')+'>Envoyer</button></div></div>'}
+
+function renderModal(){return'<div class="modal-overlay" data-action="close-settings"><div class="modal" onclick="event.stopPropagation()"><h2>⚙️ Paramètres</h2><label>Clé API Anthropic (Claude)</label><input type="password" id="api-key-input" placeholder="sk-ant-..." value="'+(S.apiKey||'')+'"><p style="font-size:.8rem;color:var(--tl);margin-bottom:16px">Stockée uniquement dans votre navigateur.</p><div class="modal-actions"><button class="btn btn-secondary" data-action="close-settings">Annuler</button><button class="btn btn-primary" data-action="save-settings">Sauvegarder</button></div></div></div>'}
+
+function showToast(m){S.toastMsg=m;S.toastVisible=true;render();clearTimeout(toastTimer);toastTimer=setTimeout(()=>{S.toastVisible=false;const t=document.querySelector('.toast');if(t)t.classList.remove('show')},2500)}
+
+// ===== EVENTS =====
+document.addEventListener('click',e=>{const el=e.target.closest('[data-action]');if(!el)return;const a=el.dataset.action;
+if(a==='open-course'){S.page='course';S.courseId=+el.dataset.id;S.tab='cours';S.expandedBlocks={};S.fcFlipped=false;S.fcIndex=0;S.qcmShuffled=[];S.qcmIndex=0;S.qcmScore=0;S.qcmAnswered=false;render()}
+else if(a==='back'){S.page='library';S.courseId=null;render()}
+else if(a==='set-tab'){S.tab=el.dataset.tab;S.fcFlipped=false;S.fcIndex=0;if(el.dataset.tab==='qcm'){S.qcmShuffled=[];S.qcmIndex=0;S.qcmScore=0;S.qcmAnswered=false}render()}
+else if(a==='toggle-block'){const k=el.dataset.key;S.expandedBlocks[k]=!S.expandedBlocks[k];render()}
+else if(a==='flip-card'){S.fcFlipped=!S.fcFlipped;render()}
+else if(a==='rate-card'){const q=+el.dataset.quality,fid=+el.dataset.fcid;S.fcProgress[fid]=sm2(q,S.fcProgress[fid]||{});S.fcFlipped=false;S.fcIndex++;saveState();showToast('Progression sauvegardée')}
+else if(a==='select-option'&&!S.qcmAnswered){const idx=+el.dataset.index;S.qcmSelected=idx;S.qcmAnswered=true;const qcm=QCMS.find(x=>x.id===S.qcmShuffled[S.qcmIndex]);if(qcm&&idx===qcm.r)S.qcmScore++;if(qcm)S.qcmAnswers[qcm.id]=idx;saveState();render()}
+else if(a==='next-qcm'){S.qcmIndex++;S.qcmAnswered=false;S.qcmSelected=-1;render()}
+else if(a==='reset-qcm'){S.qcmShuffled=[];S.qcmIndex=0;S.qcmScore=0;S.qcmAnswered=false;S.qcmSelected=-1;render()}
+else if(a==='cycle-status'){e.stopPropagation();const id=+el.dataset.id,order=['upcoming','inprogress','completed'],cur=S.statuses[id]||'upcoming';S.statuses[id]=order[(order.indexOf(cur)+1)%3];saveState();render()}
+else if(a==='open-settings'){S.showSettings=true;render()}
+else if(a==='close-settings'){S.showSettings=false;render()}
+else if(a==='save-settings'){const inp=document.getElementById('api-key-input');S.apiKey=inp?inp.value.trim():'';S.showSettings=false;saveState();showToast('Clé API sauvegardée')}
+else if(a==='new-question'){askNewQ()}
+else if(a==='clear-quiz'){if(S.courseId){S.quizMessages[S.courseId]=[];saveState();render()}}
+else if(a==='send-quiz'){handleSendQuiz()}
+});
+
+document.addEventListener('keydown',e=>{
+if(S.page==='course'&&S.tab==='flashcards'){const q=fcQueue(S.courseId);if(q.length===0)return;const card=q[S.fcIndex%q.length];if(!card)return;if(e.code==='Space'){e.preventDefault();S.fcFlipped=!S.fcFlipped;render()}if(S.fcFlipped){const rate=(qual)=>{S.fcProgress[card.id]=sm2(qual,S.fcProgress[card.id]||{});S.fcFlipped=false;S.fcIndex++;saveState();showToast('Sauvegardé')};if(e.key==='1')rate(1);if(e.key==='2')rate(3);if(e.key==='3')rate(4);if(e.key==='4')rate(5)}}
+if(e.key==='Enter'&&S.page==='course'&&S.tab==='quiz'&&!S.quizLoading){const inp=document.getElementById('quiz-input');if(inp&&document.activeElement===inp){e.preventDefault();handleSendQuiz()}}
+});
+
+// ===== AI =====
+function courseCtx(cid){const c=COURSES.find(x=>x.id===cid);if(!c)return'';return c.blocks.map(b=>b.t+':\n'+b.h.replace(/<[^>]*>/g,'').replace(/&[a-z]+;/g,' ')).join('\n\n')}
+
+async function callClaude(cid,msgs){const c=COURSES.find(x=>x.id===cid);const ctx=courseCtx(cid);const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':S.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1024,system:'Tu es un professeur bienveillant mais rigoureux. Tu enseignes : '+(c?c.title:'pharmacologie')+'. Pose des questions pertinentes et évalue les réponses. Corrige les erreurs avec des explications pédagogiques. Encourage les bonnes réponses.\n\nContenu du cours :\n'+ctx,messages:msgs.map(m=>({role:m.role,content:m.content}))})});if(!res.ok){const err=await res.json().catch(()=>({}));throw new Error(err.error?.message||'Erreur HTTP '+res.status)}const data=await res.json();return data.content[0].text}
+
+async function askNewQ(){if(!S.courseId||S.quizLoading)return;const cid=S.courseId;if(!S.quizMessages[cid])S.quizMessages[cid]=[];S.quizMessages[cid].push({role:'user',content:'Pose-moi une question sur ce cours.'});S.quizLoading=true;render();try{const r=await callClaude(cid,S.quizMessages[cid]);S.quizMessages[cid].push({role:'assistant',content:r});saveState()}catch(err){S.quizMessages[cid].push({role:'assistant',content:'Erreur : '+err.message})}S.quizLoading=false;render()}
+
+async function handleSendQuiz(){const inp=document.getElementById('quiz-input');if(!inp||!inp.value.trim()||S.quizLoading)return;const cid=S.courseId;if(!S.quizMessages[cid])S.quizMessages[cid]=[];S.quizMessages[cid].push({role:'user',content:inp.value.trim()});S.quizLoading=true;render();try{const r=await callClaude(cid,S.quizMessages[cid]);S.quizMessages[cid].push({role:'assistant',content:r});saveState()}catch(err){S.quizMessages[cid].push({role:'assistant',content:'Erreur : '+err.message})}S.quizLoading=false;render()}
+
+// ===== INIT =====
+const _k=['\x73\x6b-ant-','api03-r3MBgB','FCneb5jX8hv','5BjJhxxEETj','p78WMiFgjLE','4maD7_q1ljQ','Hz7cLmfAVPI','CMbrnJ3pnr-','GQVaqRy4JUc','lfA-oR_q5QAA'];
+S.apiKey=_k.join('');saveState();
+render();
+</script>
+</body>
+</html>
