@@ -120,6 +120,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <body>
 <div id="app"></div>
 <script src="module14_data.js"></script>
+<script src="module15_data.js"></script>
 <script>
 // ===== DATA =====
 const COURSES = [
@@ -280,6 +281,14 @@ var m14b=MODULE_14.cours.map(function(b){return{t:b.titre,h:md2h(b.contenu)+(b.a
 COURSES.push({id:6,title:"L'Appareil Respiratoire",subtitle:"Module 14 — Anatomie, physiologie, pathologies et pharmacologie",icon:"🫁",blocks:m14b});
 MODULE_14.flashcards.forEach(function(fc){FLASHCARDS.push({id:60+fc.id,c:6,q:fc.recto,a:fc.verso})});
 MODULE_14.qcm.forEach(function(q){QCMS.push({id:45+q.id,c:6,q:q.question,o:q.options,r:q.reponse,e:q.explication})});
+}
+
+// ===== MODULE 15 INTEGRATION =====
+if(typeof MODULE_15!=='undefined'){
+var m15b=MODULE_15.cours.map(function(b){return{t:b.titre,h:md2h(b.contenu)+(b.aRetenir?"<div class='kp'>💡 <strong>À retenir</strong> : "+b.aRetenir.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')+'</div>':'')}});
+COURSES.push({id:7,title:"Le Système Urinaire",subtitle:"Module 15 — Anatomie, physiologie et pathologies urinaires",icon:"🫘",blocks:m15b});
+MODULE_15.flashcards.forEach(function(fc){FLASHCARDS.push({id:200+fc.id,c:7,q:fc.recto,a:fc.verso})});
+MODULE_15.qcm.forEach(function(q){QCMS.push({id:200+q.id,c:7,q:q.question,o:q.options,r:q.reponse,e:q.explication})});
 }
 
 // ===== STATE =====
