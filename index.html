@@ -350,7 +350,7 @@ const LS='shanoe';
 let toastTimer=null;
 function defaults(){return{page:'library',courseId:null,tab:'cours',statuses:{},fcProgress:{},qcmAnswers:{},apiKey:'',quizMessages:{},showSettings:false,expandedBlocks:{},fcFlipped:false,fcIndex:0,qcmIndex:0,qcmAnswered:false,qcmSelected:-1,qcmScore:0,qcmShuffled:[],quizLoading:false,toastMsg:'',toastVisible:false}}
 function loadState(){try{const s=JSON.parse(localStorage.getItem(LS)||'{}');return{...defaults(),...s}}catch(e){return defaults()}}
-function saveState(){localStorage.setItem(LS,JSON.stringify({statuses:S.statuses,fcProgress:S.fcProgress,qcmAnswers:S.qcmAnswers,apiKey:S.apiKey,quizMessages:S.quizMessages}))}
+function saveState(){localStorage.setItem(LS,JSON.stringify({statuses:S.statuses,fcProgress:S.fcProgress,qcmAnswers:S.qcmAnswers,apiKey:S.apiKey,apiModel:S.apiModel,quizMessages:S.quizMessages}))}
 let S=loadState();
 
 // ===== SM-2 =====
